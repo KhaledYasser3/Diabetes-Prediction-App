@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .header {
+            width: 100%;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header h1::before {
+            content: "⦿";
+            margin-right: 8px;
+            color: #00cc99;
+        }
+        .header h1 .by-author {
+            font-size: 12px;
+            margin-left: 5px;
+            color: #bbb;
+        }
+        .main-content {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            gap: 20px;
+            position: relative;
+        }
+        .container {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            flex: 2;
+            box-sizing: border-box;
+        }
+        .sidebar {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            flex: 1;
+            box-sizing: border-box;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        .sidebar.active {
+            display: block;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+            color: #e0e0e0;
+            text-align: center;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar li {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #3a3a3a;
+            border-radius: 5px;
+            color: #ddd;
+        }
+        .toggle-history {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #00cc99;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+        .toggle-history:hover {
+            background-color: #00b386;
+        }
+        h2 {
+            text-align: center;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #bbb;
+            margin-right: 10px;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+        }
+        .form-group i {
+            margin-right: 5px;
+            color: #00cc99;
+        }
+        .form-group input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #bbb;
+        }
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #e0e0e0;
+        }
+        .instructions {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            Diabetes Prediction App
+            <span class="by-author">by Khaled Yasser</span>
+        </h1>
+    </div>
+    <div class="main-content">
+        <div class="container">
+            <h2>Check Your Health</h2>
+            <form method="POST" action="/predict">
+                <div class="form-group">
+                    <label for="Pregnancies"><i class="fas fa-baby"></i> Pregnancies</label>
+                    <input type="number" id="Pregnancies" name="Pregnancies" step="1" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="Glucose"><i class="fas fa-tint"></i> Glucose</label>
+                    <input type="number" id="Glucose" name="Glucose" step="0.1" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="BloodPressure"><i class="fas fa-heartbeat"></i> Blood Pressure</label>
+                    <input type="number" id="BloodPressure" name="BloodPressure" step="0.1" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="SkinThickness"><i class="fas fa-ruler"></i> Skin Thickness</label>
+                    <input type="number" id="SkinThickness" name="SkinThickness" step="0.1" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="Insulin"><i class="fas fa-syringe"></i> Insulin</label>
+                    <input type="number" id="Insulin" name="Insulin" step="0.1" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="BMI"><i class="fas fa-weight"></i> BMI</label>
+                    <input type="number" id="BMI" name="BMI" step="0.1" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="DiabetesPedigreeFunction"><i class="fas fa-dna"></i> Diabetes Pedigree Function <i style="font-size: 12px;">(ratio)</i></label>
+                    <input type="number" id="DiabetesPedigreeFunction" name="DiabetesPedigreeFunction" step="0.001" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="Age"><i class="fas fa-user"></i> Age</label>
+                    <input type="number" id="Age" name="Age" step="1" min="0" required>
+                </div>
+                <button type="submit">Predict</button>
+                <button type="button" class="toggle-history">Show History</button>
+            </form>
+            <div id="loading">Loading...</div>
+            {% if prediction_text %}
+            <div id="result">{{ prediction_text }}</div>
+            {% endif %}
+            <div class="instructions">
+                Enter your health data (all values should be non-negative) and click Predict to check your diabetes risk.
+            </div>
+        </div>
+        <div class="sidebar">
+            <h3>Prediction History</h3>
+            {% if history %}
+            <ul>
+                {% for entry in history %}
+                <li>
+                    <strong>Time:</strong> {{ entry.timestamp }}<br>
+                    <strong>Inputs:</strong> Pregnancies: {{ entry.features[0] }}, Glucose: {{ entry.features[1] }}, Blood Pressure: {{ entry.features[2] }}, Skin Thickness: {{ entry.features[3] }}, Insulin: {{ entry.features[4] }}, BMI: {{ entry.features[5] }}, DPF: {{ entry.features[6] }}, Age: {{ entry.features[7] }}<br>
+                    <strong>Result:</strong> {{ entry.result }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No predictions yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function() {
+            document.getElementById('loading').style.display = 'block';
+        });
+
+        document.querySelector('.toggle-history').addEventListener('click', function() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+            this.textContent = sidebar.classList.contains('active') ? 'Hide History' : 'Show History';
+        });
+    </script>
+</body>
+</html>
